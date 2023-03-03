@@ -5,7 +5,7 @@ const { Constants } = require("./src/constants/constants");
 const app = express();
 
 // import connection
-const { connection } = require('./src/database/db');
+const { connection } = require("./src/database/db");
 
 //allow reader the values of a body
 app.use(express.json({ limit: "100mb" }));
@@ -18,14 +18,13 @@ app.use(cors());
 const port = process.env.PORT || 4000;
 
 // routers app
-app.use("/api/user", require("./src/router/user"));
-// app.use("/api/entity", require("./src/routes/entity"));
-
+app.use("/api/user", require("./src/routes/user"));
+app.use("/api/entity", require("./src/routes/entity"));
 
 // init app
 app.listen(port, "0.0.0.0", () => {
-    console.log(`server running in port ${port}`);
-    connection.sync({ force: true}).then(()=> {
-        console.log("Conected to db successfull")
-    })
+  console.log(`server running in port ${port}`);
+  connection.sync({}).then(() => {
+    console.log("Conected to db successfull");
+  });
 });

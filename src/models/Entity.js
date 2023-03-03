@@ -14,7 +14,6 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Entity.init({
-    entityId: DataTypes.INTEGER,
     name: DataTypes.STRING,
     identificationNumber: DataTypes.STRING,
     expirationDate: DataTypes.STRING,

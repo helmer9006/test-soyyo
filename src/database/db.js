@@ -3,8 +3,6 @@ const { Sequelize, DataTypes } = require("sequelize");
 const config = require("../../config/database");
 const env = process.env.NODE_ENV || 'development';
 const db = {};
-console.log("env",env)
-console.log("config", config[env].host);
 db.connection = new Sequelize(
   config[env].database,
   config[env].username,

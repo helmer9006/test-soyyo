@@ -1,0 +1,112 @@
+const { Entity } = require("../database/db");
+const { validationResult } = require("express-validator");
+const { Op } = require("sequelize");
+const path = require("path");
+const { Constants } = require("../constants/constants");
+
+const createEntity = async (req, res) => {
+  console.log("POST - CREATE ENTITY");
+  try {
+    //validar errores
+    const errores = validationResult(req);
+    if (!errores.isEmpty()) {
+      return res.status(400).json({
+        status: false,
+        response: errores.array(),
+        msg: "Error in data input",
+      });
+    }
+    // const { profile, firtName, lastName } = req.usuario;
+    //Valido perfil
+    // if (profile === Constants.TYPE_USER.ADMIN) {
+    //validate entity
+    const { identificationNumber } = req.body;
+    let entityReg = await Entity.findOne({
+      where: {
+        [Op.or]: [{ identificationNumber }],
+      },
+    });
+    if (entityReg) {
+      return res.json({
+        status: false,
+        response: entityReg,
+        msg: "Entity already exists",
+      });
+    }
+    const entityCreated = await Entity.create(req.body);
+    if (!entityCreated) {
+      return res.json({
+        status: false,
+        response: {},
+        msg: "could not create entity",
+      });
+    }
+
+    res.json({
+      status: true,
+      response: entityCreated,
+      msg: "Entity create successfull.",
+    });
+
+    // } else {
+    // return res.status(403).json({
+    //     status: false, response: {}, msg: `Not authorized ${firtName} ${lastName} with profile ${profile}`,
+    // });
+    // }
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ status: false, response: {}, msg: "Error creating entity" });
+  }
+};
+
+const getAllEntities = async (req, res) => {
+  console.log("GET - ALL ENTITIES");
+  try {
+    const entities = await Entity.findAll();
+    if (entities.length == 0) {
+      return res.json({ status: true, response: [], msg: "Entity not found" });
+    }
+    res.json({ status: true, response: entities, msg: "Entities found" });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ status: false, response: [], msg: "Error internal server." });
+  }
+};
+
+const getEntityById = async (req, res) => {
+  console.log("GET - ALL ENTITY BY ID");
+  try {
+    const { id } = req.params;
+    console.log(id)
+    console.log(req.params)
+    if (!id || isNaN(id)) {
+      return res.json({
+        status: false,
+        response: [],
+        msg: "Error in data input, parameter incorrect",
+      });
+    }
+    const entity = await Entity.findOne({
+      where: { id },
+    });
+    if (!entity) {
+      return res.json({ status: false, response: [], msg: "Entity not found" });
+    }
+    res.json({ status: true, response: entity, msg: "Entity found" });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ status: false, response: [], msg: "Error internal server." });
+  }
+};
+
+module.exports = {
+  createEntity,
+  getAllEntities,
+  getEntityById,
+};

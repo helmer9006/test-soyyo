@@ -24,7 +24,22 @@ app.use("/api/entities", require("./src/routes/entity"));
 // init app
 app.listen(port, "0.0.0.0", () => {
   console.log(`server running in port ${port}`);
-  connection.sync({}).then(() => {
-    console.log("Conected to db successfull");
-  });
+  connection
+    .sync({})
+    .then(() => {
+      console.log("Conected to db successfull");
+    })
+    .catch((err) => {
+      if (err) {
+        if (err.code === "PROTOCOL_CONNECTION_LOST") {
+          console.error("Database connection was closed.");
+        }
+        if (err.code === "ER_CON_COUNT_ERROR") {
+          console.error("Database has too many connections.");
+        }
+        if (err.code === "ECONNREFUSED") {
+          console.error("Database connection was refused.");
+        }
+      }
+    });
 });

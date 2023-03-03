@@ -131,7 +131,7 @@ const filter = async (req, res) => {
         identificationNumber,
         expirationDate,
         contactName,
-        contactEmail,
+        contactMail,
         logo,
         name,
       } = result.data.data;
@@ -142,7 +142,7 @@ const filter = async (req, res) => {
         identificationNumber: identificationNumber,
         expirationDate: expirationDate,
         contactName: contactName,
-        contactEmail: contactEmail,
+        contactEmail: contactMail,
         logo: logo,
       });
     }

@@ -23,5 +23,26 @@ router.post(
 
 router.get("/getAllEntities", entityController.getAllEntities);
 router.get("/getEntityById/:id", entityController.getEntityById);
-
+router.post(
+  "/filter",
+  [
+    check("startId", "The startid it must be numeric and is required")
+      .isNumeric()
+      .custom((value, { req }) => {
+        if (value < 1 || value > 20) {
+          throw new Error("Error the range  for filter is incorrect");
+        }
+        return true;
+      }),
+    check("endId", "The endid It must be numeric and is required")
+      .isNumeric()
+      .custom((value, { req }) => {
+        if (value < 1 || value > 20) {
+          throw new Error("Error the range  for filter is incorrect");
+        }
+        return true;
+      }),
+  ],
+  entityController.filter
+);
 module.exports = router;

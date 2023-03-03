@@ -3,7 +3,7 @@ const { validationResult } = require("express-validator");
 const { Op } = require("sequelize");
 const path = require("path");
 const { Constants } = require("../constants/constants");
-
+const axios = require("axios");
 const createEntity = async (req, res) => {
   console.log("POST - CREATE ENTITY");
   try {
@@ -81,8 +81,8 @@ const getEntityById = async (req, res) => {
   console.log("GET - ALL ENTITY BY ID");
   try {
     const { id } = req.params;
-    console.log(id)
-    console.log(req.params)
+    console.log(id);
+    console.log(req.params);
     if (!id || isNaN(id)) {
       return res.json({
         status: false,
@@ -105,8 +105,65 @@ const getEntityById = async (req, res) => {
   }
 };
 
+const filter = async (req, res) => {
+  try {
+    const entities = [];
+    const errores = validationResult(req);
+    if (!errores.isEmpty()) {
+      return res.status(400).json({
+        status: false,
+        response: errores.array(),
+        Error: "Error en validación datos de entrada",
+      });
+    }
+    const { startId, endId } = req.body;
+    for (let i = startId; i <= endId; i++) {
+      const url = `https://f56c0ao48b.execute-api.us-east-1.amazonaws.com/dev/entity/v2.1/entities/${i}`;
+      const result = await axios.get(url);
+      if (!result || !result.data || !result.data.data) {
+        return res.status(404).json({
+          status: false,
+          Error: `Error no se encuentra la entidad con id ${i} para rango especificado`,
+        });
+      }
+      const {
+        entityId,
+        identificationNumber,
+        expirationDate,
+        contactName,
+        contactEmail,
+        logo,
+        name,
+      } = result.data.data;
+
+      entities.push({
+        entityId: entityId,
+        name: name,
+        identificationNumber: identificationNumber,
+        expirationDate: expirationDate,
+        contactName: contactName,
+        contactEmail: contactEmail,
+        logo: logo,
+      });
+    }
+    var entitiesSort = entities.sort(SortName);
+    res
+      .status(200)
+      .json({ status: true, description: "OK", content: entitiesSort });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ status: false, response: [], msg: "Error internal server." });
+  }
+};
+
+const SortName = (x, y) => {
+  return x.name.localeCompare(y.name);
+};
 module.exports = {
   createEntity,
   getAllEntities,
   getEntityById,
+  filter,
 };

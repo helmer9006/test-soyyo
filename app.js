@@ -19,7 +19,7 @@ const port = process.env.PORT || 4000;
 
 // routers app
 app.use("/api/user", require("./src/routes/user"));
-app.use("/api/entity", require("./src/routes/entity"));
+app.use("/api/entities", require("./src/routes/entity"));
 
 // init app
 app.listen(port, "0.0.0.0", () => {

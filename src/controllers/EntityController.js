@@ -16,10 +16,6 @@ const createEntity = async (req, res) => {
         msg: "Error in data input",
       });
     }
-    // const { profile, firtName, lastName } = req.usuario;
-    //Valido perfil
-    // if (profile === Constants.TYPE_USER.ADMIN) {
-    //validate entity
     const { identificationNumber } = req.body;
     let entityReg = await Entity.findOne({
       where: {
@@ -47,12 +43,6 @@ const createEntity = async (req, res) => {
       response: entityCreated,
       msg: "Entity create successfull.",
     });
-
-    // } else {
-    // return res.status(403).json({
-    //     status: false, response: {}, msg: `Not authorized ${firtName} ${lastName} with profile ${profile}`,
-    // });
-    // }
   } catch (error) {
     console.log(error);
     res
@@ -66,9 +56,15 @@ const getAllEntities = async (req, res) => {
   try {
     const entities = await Entity.findAll({});
     if (entities.length == 0) {
-      return res.status(404).json({ status: true, response: [], msg: "Entity not found" });
+      return res
+        .status(404)
+        .json({ status: true, response: [], msg: "Entity not found" });
     }
-    return res.json({ status: true, response: entities, msg: "Entities found" });
+    return res.json({
+      status: true,
+      response: entities,
+      msg: "Entities found",
+    });
   } catch (error) {
     console.log(error);
     return res
@@ -158,6 +154,48 @@ const filter = async (req, res) => {
   }
 };
 
+const filterByRange = async (req, res) => {
+  try {
+    debugger;
+    const entities = [];
+    const errores = validationResult(req);
+    if (!errores.isEmpty()) {
+      return res.status(400).json({
+        status: false,
+        response: errores.array(),
+        Error: "Error en validación datos de entrada",
+      });
+    }
+    const { startId, endId } = req.body;
+    const entitiesFound = await Entity.findAll({
+      where: { id: { [Op.between]: [startId, endId] } },
+      attributes: [
+        ["id", "entityId"],
+        "name",
+        "identificationNumber",
+        "expirationDate",
+        "contactName",
+        "contactEmail",
+      ],
+    });
+    if (!entitiesFound) {
+      return res.status(404).json({
+        status: false,
+        Error: `Error no se encuentra la entidad con id ${i} para rango especificado`,
+      });
+    }
+    var entitiesSort = entitiesFound.sort(SortName);
+    res
+      .status(200)
+      .json({ status: true, description: "OK", content: entitiesSort });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ status: false, response: [], msg: "Error internal server." });
+  }
+};
+
 const SortName = (x, y) => {
   return x.name.localeCompare(y.name);
 };
@@ -166,4 +204,5 @@ module.exports = {
   getAllEntities,
   getEntityById,
   filter,
+  filterByRange,
 };

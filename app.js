@@ -18,7 +18,7 @@ app.use(cors());
 const port = process.env.PORT || 4000;
 
 // routers app
-// app.use("/api/user", require("./src/routes/user"));
+app.use("/api/user", require("./src/router/user"));
 // app.use("/api/entity", require("./src/routes/entity"));
 
 

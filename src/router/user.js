@@ -1,44 +1,25 @@
-// const express = require("express");
-// const router = express.Router();
-// const usuariosController = require("../controllers/UsuariosController");
-// const { check } = require("express-validator");
+const express = require("express");
+const router = express.Router();
+const userController = require("../controllers/UserController");
+const { check } = require("express-validator");
 // const auth = require("../middleware/auth");
 
+// create new user
+router.post(
+  "/create",
+  [
+    check("firstName", "The firstName is required").not().isEmpty(),
+    check("lastName", "The lastName is required").not().isEmpty(),
+    check("email", "Add an email valid.").isEmail(),
+    check(
+      "password",
+      "the password cannot be empty and must contain at least 6 characters."
+    ).isLength({ min: 6 }),
+    check("profile", "The profile is required").not().isEmpty(),
+  ],
+  userController.createUser
+);
 
-//DEVUELVE TODOS LOS USUARIOS
-router.get("/traertodos", auth, usuariosController.traerUsuarios);
-router.get("/traer/:id", auth, usuariosController.traerUsuarioxId);
-router.get("/cambiarestado/:id", auth, usuariosController.cambiarEstado);
-router.get("/traerPorNombre/:text?", auth, usuariosController.buscarUsuarioPorNombre);
-router.get("/cumples", auth, usuariosController.cumpleañeros);
-router.post("/crear",
-    auth,
-    createFoto,
-    [
-        check("nombres", "El Nombre es obligatorio").not().isEmpty(),
-        check("apellidos", "El apellido es obligatorio").not().isEmpty(),
-        check("tipoDoc", "El tipo de identificacion es obligatorio").not().isEmpty(),
-        check("documento", "El número de documento es obligatorio").not().isEmpty(),
-        check('correo', 'Agrega un correo válido.').isEmail(),
-        check('clave', 'La clave no puede estar vacía y debe contener mínimo 6 caracteres.').isLength({ min: 6 }),
-        check("perfil", "El perfil es obligatorio").not().isEmpty(),
-        check('fechaNacimiento').isISO8601().toDate(),
-        check("foto", "La foto es obligatoria").not().isEmpty(),
-    ], usuariosController.crearUsuario);
-
-router.put("/actualizar/:id", auth, createFoto, usuariosController.actualizarUsuario);
-router.delete("/eliminar/:id", auth, usuariosController.eliminarUsuario);
-router.put("/cambiarclave/", auth,
-    [
-        check('clave', 'La clave no puede estar vacía y debe contener mínimo 6 caracteres.').isLength({ min: 6 }),
-        check('nuevaClave', 'La nueva clave no puede estar vacía y debe contener mínimo 6 caracteres.').isLength({ min: 6 }),
-        check('idUsuario', 'El id del usuario es obligatorio').not().isEmpty().isNumeric(),
-
-    ], usuariosController.cambiarClave);
-    router.put("/cambiarfoto/", auth,
-    [
-        check('foto', 'La foto no puede estar vacía.').isLength({ min: 6 }),
-        check('idUsuario', 'El id del usuario es obligatorio').not().isEmpty().isNumeric(),
-    ], usuariosController.cambiarFoto);
+router.get("/getAllUsers", userController.getAllUsers);
 
 module.exports = router;

@@ -4,12 +4,13 @@ const config = require("../../config/database");
 const env = process.env.NODE_ENV || 'development';
 const db = {};
 db.connection = new Sequelize(
-  config[env].database,
-  config[env].username,
-  config[env].password,
+  config['development'].database,
+  config['development'].username,
+  config['development'].password,
   {
-    host: config[env].host,
-    dialect: config[env].dialect,
+    host: config['development'].host,
+    dialect: config['development'].dialect,
+    logging: false
   }
 );
 // models

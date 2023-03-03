@@ -1,5 +1,5 @@
 # test-api-soyyo  
-Desarrollo de api como presentación de prueba para acceder al cargo backend node.     
+API development as test submission to access backend cargo with node    
 
 ## Steps
 
@@ -28,11 +28,13 @@ Open your local browser and verify the test-api-soyyo is working by accessing:
 
 ### 2) create the docker image
 
-cd test-api-soyyo
+cd soyyo
 docker build -t test-soyyo:1 .
 
 ## 3) Create the api container
 
 docker create -p4000:4000 --name api-soyyo test-soyyo:1
 
+## 4) Execute TEST 
 
+npm test

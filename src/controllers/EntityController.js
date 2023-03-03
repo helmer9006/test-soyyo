@@ -64,14 +64,14 @@ const createEntity = async (req, res) => {
 const getAllEntities = async (req, res) => {
   console.log("GET - ALL ENTITIES");
   try {
-    const entities = await Entity.findAll();
+    const entities = await Entity.findAll({});
     if (entities.length == 0) {
-      return res.json({ status: true, response: [], msg: "Entity not found" });
+      return res.status(404).json({ status: true, response: [], msg: "Entity not found" });
     }
-    res.json({ status: true, response: entities, msg: "Entities found" });
+    return res.json({ status: true, response: entities, msg: "Entities found" });
   } catch (error) {
     console.log(error);
-    res
+    return res
       .status(500)
       .json({ status: false, response: [], msg: "Error internal server." });
   }

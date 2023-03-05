@@ -44,9 +44,11 @@ describe("Test API-SOYYO entity", () => {
     it("returned array, query ok and properties requerid", async () => {
       expect(response.body.content).toBeInstanceOf(Array);
       expect(response.body.content[0].entityId).toBeDefined();
+      expect(response.body.content[0].name).toBeDefined();
+      expect(response.body.content[0].identificationNumber).toBeDefined();
       expect(response.body.content[0].expirationDate).toBeDefined();
-      expect(response.body.content[0].expirationDate).toBeDefined();
-      expect(response.body.content[0].expirationDate).toBeDefined();
+      expect(response.body.content[0].contactName).toBeDefined();
+      expect(response.body.content[0].contactEmail).toBeDefined();
     });
   });
 });
